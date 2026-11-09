@@ -60,4 +60,6 @@ export interface HabitDraft {
   durationDays: number;
   /** Id reserved while previewing, so the previewed plant is exactly the one that gets planted. */
   id?: string;
+  /** Pot colour chosen on the preview screen (otherwise picked automatically). */
+  potColor?: PotColor;
 }

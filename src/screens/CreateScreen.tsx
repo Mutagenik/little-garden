@@ -24,7 +24,13 @@ export function CreateScreen() {
     e.preventDefault();
     setSubmitted(true);
     if (nameError || conditionError) return;
-    setDraft({ id: draft?.id, name: name.trim(), successCondition: condition.trim(), durationDays: duration });
+    setDraft({
+      id: draft?.id,
+      potColor: draft?.potColor,
+      name: name.trim(),
+      successCondition: condition.trim(),
+      durationDays: duration,
+    });
     navigate('/new/preview');
   };
 

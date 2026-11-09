@@ -1,3 +1,5 @@
+/* Colours of leaves and pots are set inline by Plant.tsx (see skin.ts / pots.ts).
+   This file handles states that need CSS: transitions, today's glow, future, selection, focus. */
 .plant {
   display: block;
   width: 100%;
@@ -6,58 +8,40 @@
 }
 
 .plant__shadow {
-  fill: rgba(70, 50, 30, 0.13);
+  fill: rgba(90, 70, 50, 0.1);
 }
 
 .plant__soil {
-  fill: var(--soil);
+  fill: #6b5543;
 }
 
 .plant__stems path {
   fill: none;
-  stroke: var(--stem);
   stroke-linecap: round;
 }
 
 .leaf__blade {
-  stroke-width: 1.1;
-  stroke-linejoin: round;
-  transition: fill 0.35s ease, stroke 0.35s ease;
+  stroke: none;
+  transition: fill 0.35s ease;
 }
 
 .leaf__vein {
   fill: none;
   stroke-width: 0.9;
   stroke-linecap: round;
-  transition: stroke 0.35s ease;
 }
 
-.leaf--white .leaf__blade {
-  fill: var(--leaf-white);
-  stroke: var(--leaf-white-line);
-}
-.leaf--white .leaf__vein {
-  stroke: var(--leaf-white-vein);
+.leaf__outline {
+  fill: none;
+  stroke-width: 0.6;
+  stroke-linejoin: round;
 }
 
-.leaf--green .leaf__blade {
-  fill: var(--leaf-green);
-  stroke: var(--leaf-green-line);
-}
-.leaf--green .leaf__vein {
-  stroke: var(--leaf-green-vein);
+.leaf__outline--plain {
+  stroke-width: 1;
 }
 
-.leaf--ochre .leaf__blade {
-  fill: var(--leaf-ochre);
-  stroke: var(--leaf-ochre-line);
-}
-.leaf--ochre .leaf__vein {
-  stroke: var(--leaf-ochre-vein);
-}
-
-.leaf--future .leaf__blade {
-  fill: var(--leaf-future);
+.leaf--future .leaf__outline {
   stroke-dasharray: 2.5 2;
 }
 
@@ -66,8 +50,9 @@
   animation: leaf-glow 2.8s ease-in-out infinite;
 }
 
-.leaf--selected .leaf__blade {
-  stroke: var(--ink);
+.leaf--selected .leaf__outline {
+  stroke: var(--ink) !important;
+  stroke-opacity: 1 !important;
   stroke-width: 1.8;
 }
 
@@ -80,8 +65,9 @@
   outline: none;
 }
 
-.plant--interactive .leaf:focus-visible .leaf__blade {
-  stroke: var(--focus);
+.plant--interactive .leaf:focus-visible .leaf__outline {
+  stroke: var(--focus) !important;
+  stroke-opacity: 1 !important;
   stroke-width: 2.4;
 }
 
@@ -99,8 +85,7 @@
   .leaf--today .leaf__blade {
     animation: none;
   }
-  .leaf__blade,
-  .leaf__vein {
+  .leaf__blade {
     transition: none;
   }
 }

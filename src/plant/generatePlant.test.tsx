@@ -31,6 +31,23 @@ describe('generatePlant', () => {
     }
   });
 
+  it.each(PLANT_STYLES)('style %s: leaf markings never add extra leaves, in any colour', (style) => {
+    for (const n of [4, 9, 15]) {
+      const statuses = Array.from({ length: n }, (_, i) => (['green', 'ochre', 'white'] as const)[i % 3]);
+      const { container, unmount } = render(
+        <Plant leafCount={n} seed={7} style={style} potColor="cream" statuses={statuses} onLeafSelect={() => {}} />,
+      );
+      expect(container.querySelectorAll('.leaf__blade')).toHaveLength(n);
+      expect(container.querySelectorAll('[role="button"]')).toHaveLength(n);
+      // Marked leaves carry the decorative markings; unmarked leaves stay plain.
+      const green = container.querySelector('[data-status="green"]')!;
+      const white = container.querySelector('[data-status="white"]')!;
+      expect(green.querySelector('.leaf__decor')).not.toBeNull();
+      expect(white.querySelector('.leaf__decor')).toBeNull();
+      unmount();
+    }
+  });
+
   it('is deterministic: the same seed gives the same plant', () => {
     for (const style of PLANT_STYLES) {
       for (const n of [4, 9, 15]) {

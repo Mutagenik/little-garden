@@ -60,6 +60,15 @@ export const en = {
     grow: "Let's grow!",
     edit: 'Edit habit',
     reroll: 'Try another plant',
+    potColor: 'Pot colour',
+  },
+  pots: {
+    terracotta: 'Terracotta',
+    dustyPink: 'Dusty pink',
+    mustard: 'Mustard',
+    softBlue: 'Soft blue',
+    sage: 'Sage',
+    cream: 'Cream',
   },
   care: {
     started: 'Started',

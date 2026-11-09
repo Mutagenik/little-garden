@@ -12,7 +12,7 @@
 }
 
 .preview__plant {
-  width: min(78vw, 300px);
+  width: min(66vw, 260px);
 }
 
 .preview__reroll {
@@ -27,12 +27,67 @@
   box-shadow: var(--shadow-card);
 }
 
+.pot-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-4);
+}
+
+.pot-picker__label {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+}
+
+.pot-picker__swatches {
+  display: flex;
+  gap: 2px;
+}
+
+/* 44px tap target around a 30px swatch. */
+.pot-picker__swatch {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pot-picker__swatch span {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(80, 60, 40, 0.15);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pot-picker__swatch.is-selected span {
+  transform: scale(1.08);
+  box-shadow:
+    inset 0 0 0 1px rgba(80, 60, 40, 0.15),
+    0 0 0 2px var(--milk),
+    0 0 0 4px var(--sage);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pot-picker__swatch span {
+    transition: none;
+  }
+}
+
 .preview__info {
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-5) 0;
+  padding: var(--space-4) 0;
 }
 
 .preview__name {

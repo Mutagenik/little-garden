@@ -32,7 +32,7 @@ be added later.
 |---|---|---|
 | `#/room` (default) | **My Room**: cosy room scene (window + sill + wooden shelves) with all *active* plants. Tap a pot to open Daily Care. "Grow a new friend" button. Has an empty-state illustration. | `src/screens/RoomScreen.tsx` |
 | `#/new` | **Create**: habit name, success condition, duration stepper/slider (4–15). | `src/screens/CreateScreen.tsx` |
-| `#/new/preview` | **Meet your new friend**: the exact plant that will be planted (white leaves), "N leaves = N days", end date. **Try another plant** rerolls the look. **Let's grow!** creates the habit. **Edit habit** goes back to the form with values kept. | `src/screens/PreviewScreen.tsx` |
+| `#/new/preview` | **Meet your new friend**: the exact plant that will be planted (white leaves), "N leaves = N days", end date. **Try another plant** rerolls the plant type (keeps the pot colour). **Pot colour** swatches (6) change only the pot. **Let's grow!** creates the habit. **Edit habit** goes back to the form with all values kept (including plant and pot). | `src/screens/PreviewScreen.tsx` |
 | `#/plant/:id` | **Daily Care**: large interactive plant. Tap a leaf → bottom sheet with its date and *Mark green / Mark ochre / Clear*. Future leaves show only a note. Also facts, day dots, Edit (name + condition), Delete. | `src/screens/CareScreen.tsx` |
 | (overlay) | **Completion screen**: shown once per finished plant. All green → petals + congratulation; otherwise a neutral, kind message. Stats. | `src/screens/CompletionScreen.tsx` |
 | `#/garden` | **My Garden**: greenhouse with *completed* plants. | `src/screens/GardenScreen.tsx` |
@@ -119,7 +119,8 @@ src/
   plant/                Procedural plant generator + renderer
     geometry.ts         Bézier helpers; buildLeaf() turns LeafParams → SVG path, vein, hit point, top
     generatePlant.ts    Six growth-style layouts, generatePlant(), nearestLeaf(), canvas constants
-    pots.ts             Pot palette (6 colours) and 3 pot shapes (classic/bowl/cylinder), POT_SCALE 0.8
+    skin.ts             "Soft botanical" leaf look: palettes, two-tone half, per-species markings
+    pots.ts             Pot palette (6 colours), 3 matte pot shapes (classic/bowl/cylinder), speckles
     Plant.tsx / .css    <Plant/> React SVG renderer (statuses, today glow, future dashed, selection, tap handling)
     generatePlant.test.tsx
 
@@ -177,7 +178,9 @@ Habit = {
 colour from the seed, skipping the most recently created plant's style and colour, so neighbours
 differ. The id is **reserved on the preview screen** (`draft.id`), so the previewed plant is
 exactly the planted one. **Try another plant** generates new ids until the style differs from the
-one shown, then stores the new id in the draft.
+one shown, then stores the new id in the draft together with the current pot colour
+(`draft.potColor`), so the pot stays put. The **pot colour picker** sets `draft.potColor`, which
+overrides the automatic choice in `createHabit`.
 
 ---
 
@@ -216,9 +219,32 @@ one shown, then stores the new id in the draft.
 
 ## 8. The plant generator (`src/plant/`)
 
-**Canvas:** 200 × 279 SVG units. Soil line `SOIL_Y = 216`. Pots are drawn at 80 % around the
-soil centre (`POT_TRANSFORM`). `<Plant crop>` trims empty space above the foliage
+**Canvas:** 200 × 279 SVG units. Soil line `SOIL_Y = 216`. Pots (`pots.ts`) are drawn directly in
+canvas units below the soil line. `<Plant crop>` trims empty space above the foliage
 (`spec.top`) so short plants sit snugly on shelves.
+
+**Look ("soft botanical", approved Option B):** the generator decides *where* leaves are. The skin
+(`skin.ts`) decides *how they look*, inspired by a flat, muted houseplant illustration the owner
+supplied:
+- **Marked leaves** (green/ochre) are matte and two-tone: a lighter half on one side of the
+  midrib (the `half` region, clipped to the leaf), one of 4 shade variants per leaf
+  (`tone`, from seed + index), a faint hairline outline and a pale vein. No dark outlines.
+- **Species markings** (strokes and dots, clipped inside the leaf, never leaf-shaped):
+  upright = feathered calathea stripes, tropical = fine philodendron side veins,
+  slender = snake-plant pale bands + cream margin on a deeper green palette (`SNAKE`),
+  bushy = pilea radial veins + centre dot, rosette = pale succulent tip, fern = notches.
+- **White/future leaves stay plain** (cream fill, sage-grey outline, future dashed), so a leaf
+  visibly "comes alive" when marked.
+- **Pots:** matte, rimless, lightly speckled planters (3 shapes; deterministic speckles from the
+  seed), with a soft left-to-right gradient. Palette in `POT_PALETTE`.
+- Plant.tsx renders each leaf as: `.leaf__blade` (fill, gets today's glow) → clipped
+  `.leaf__decor` → `.leaf__vein` → `.leaf__outline` (selection/focus styling). Colours are inline
+  styles; `Plant.css` handles transitions, glow, future dashes, selection and focus. SVG ids are
+  per-instance (`useId`). Tests rely on exactly N `.leaf__blade` elements, so never give
+  decorations that class.
+- UI swatches/day dots use matching CSS tokens `--leaf-green|ochre|white` in `tokens.css`.
+- A static design preview generator was used to choose this look (not part of the repo; the
+  generated page lives in the git-ignored `design-preview/`).
 
 **Pipeline:** `generatePlant(n, seed, style)` → `createRng(seed)` → one of six layout functions
 returns stems (plain strokes) + `LeafParams[]` → `buildLeaf()` converts each into a smooth SVG path
@@ -309,7 +335,7 @@ Browsers allow audio only after a user tap, so sounds are only played from tap h
 
 ## 12. Testing
 
-`npm test` runs 67 tests (Vitest + jsdom):
+`npm test` runs 75 tests (Vitest + jsdom):
 - `plant/generatePlant.test.tsx`: exactly N leaves (data and rendered DOM) for every style and
   N = 4…15, determinism, touch spacing ≥ 22, hit points inside the canvas, nearest-leaf
   selection, upright order.

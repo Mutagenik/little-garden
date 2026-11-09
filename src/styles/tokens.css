@@ -24,18 +24,15 @@
   --focus: #4f6d45;
 
   /* Plant */
-  --stem: #6f8a52;
-  --soil: #5d4636;
-  --leaf-white: #fffdf7;
-  --leaf-white-line: #a3ab95;
-  --leaf-white-vein: #d8dccd;
-  --leaf-future: #f6f3ea;
-  --leaf-green: #4f9a3d;
-  --leaf-green-line: #3a7a2c;
-  --leaf-green-vein: #8cc278;
-  --leaf-ochre: #c99645;
-  --leaf-ochre-line: #a37530;
-  --leaf-ochre-vein: #e2bf7f;
+  /* Leaf colours for UI elements (day dots, legends, swatches). The plant drawing itself
+     uses the matching palettes in src/plant/skin.ts. */
+  --leaf-white: #fbf8f0;
+  --leaf-white-line: #b3bca3;
+  --leaf-future: #f7f4ec;
+  --leaf-green: #6f9a5e;
+  --leaf-green-line: #567f4c;
+  --leaf-ochre: #c79a60;
+  --leaf-ochre-line: #a37a45;
   --glow: rgba(240, 196, 92, 0.75);
 
   /* Type */

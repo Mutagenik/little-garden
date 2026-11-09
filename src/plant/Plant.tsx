@@ -1,7 +1,8 @@
-import { memo, useMemo, type KeyboardEvent, type MouseEvent } from 'react';
+import { memo, useId, useMemo, type KeyboardEvent, type MouseEvent } from 'react';
 import type { LeafStatus, PlantStyle, PotColor } from '../lib/types';
 import { generatePlant, nearestLeaf, PLANT_HEIGHT, PLANT_WIDTH } from './generatePlant';
-import { POT_GEOMETRY, POT_PALETTE, POT_TRANSFORM } from './pots';
+import { POT_GEOMETRY, POT_PALETTE, POT_SHADOW, potSpecks, SOIL } from './pots';
+import { leafColors, leafSkin, mixHex, STEM_COLOR, UNMARKED, type DecorTone, type LeafColors } from './skin';
 import './Plant.css';
 
 export interface PlantProps {
@@ -27,6 +28,8 @@ export interface PlantProps {
   showIndices?: boolean;
 }
 
+const toneColor = (c: LeafColors, tone: DecorTone) => (tone === 'dark' ? c.dark : tone === 'band' ? c.band : c.vein);
+
 function PlantView({
   leafCount,
   seed,
@@ -44,9 +47,13 @@ function PlantView({
   showIndices,
 }: PlantProps) {
   const spec = useMemo(() => generatePlant(leafCount, seed, style), [leafCount, seed, style]);
+  const skins = useMemo(() => spec.leaves.map((leaf) => leafSkin(spec, leaf)), [spec]);
+  const specks = useMemo(() => potSpecks(seed), [seed]);
+  // SVG ids must be unique per instance (several plants share a page).
+  const uid = 'p' + useId().replace(/[^a-zA-Z0-9]/g, '');
   const viewTop = crop ? Math.max(0, Math.floor(spec.top - 6)) : 0;
   const pot = POT_GEOMETRY[spec.pot];
-  const colors = POT_PALETTE[potColor];
+  const potColors = POT_PALETTE[potColor];
   const interactive = Boolean(onLeafSelect);
 
   const handleBackgroundClick = (e: MouseEvent<SVGSVGElement>) => {
@@ -77,30 +84,45 @@ function PlantView({
       aria-label={title}
       onClick={interactive ? handleBackgroundClick : undefined}
       data-plant-style={style}
+      data-pot-color={potColor}
     >
-      <g transform={POT_TRANSFORM}>
-        <ellipse className="plant__shadow" {...pot.shadow} />
-        <path d={pot.body} fill={colors.base} />
-        <path d={pot.shade} fill={colors.shade} opacity={0.55} />
-        <path d={pot.highlight} fill={colors.light} opacity={0.8} />
-        <rect {...pot.rim} fill={colors.base} />
-        <rect x={pot.rim.x} y={pot.rim.y + pot.rim.h - 3} width={pot.rim.w} height={3} fill={colors.shade} opacity={0.5} />
-        <rect x={pot.rim.x + 6} y={pot.rim.y + 3} width={pot.rim.w * 0.35} height={2.2} rx={1.1} fill={colors.light} opacity={0.9} />
-        <ellipse className="plant__soil" {...pot.soil} />
-      </g>
+      <defs>
+        <clipPath id={`${uid}pot`}>
+          <path d={pot.body} />
+        </clipPath>
+        <linearGradient id={`${uid}pg`} x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stopColor={mixHex(potColors.base, '#ffffff', 0.12)} />
+          <stop offset="0.45" stopColor={potColors.base} />
+          <stop offset="1" stopColor={potColors.shade} />
+        </linearGradient>
+      </defs>
 
-      <g className="plant__stems">
+      {/* Pot: matte, rimless, lightly speckled. */}
+      <ellipse className="plant__shadow" {...POT_SHADOW} />
+      <path d={pot.body} fill={`url(#${uid}pg)`} />
+      <g clipPath={`url(#${uid}pot)`}>
+        {specks.map((s, i) => (
+          <circle key={i} cx={s.cx} cy={s.cy} r={s.r} fill={potColors.speck} opacity={s.opacity} />
+        ))}
+      </g>
+      <ellipse className="plant__soil" cx={SOIL.cx} cy={SOIL.cy} rx={pot.soilRx} ry={SOIL.ry} />
+
+      <g className="plant__stems" stroke={STEM_COLOR}>
         {spec.stems.map((s, i) => (
-          <path key={i} d={s.d} strokeWidth={s.width} />
+          <path key={i} d={s.d} strokeWidth={Math.round(s.width * 8) / 10} />
         ))}
       </g>
 
       <g className="plant__leaves">
         {spec.drawOrder.map((index) => {
           const leaf = spec.leaves[index];
+          const skin = skins[index];
           const status = statuses?.[index] ?? 'white';
           const isToday = index === todayIndex;
           const isFuture = futureFrom !== undefined && index >= futureFrom;
+          const marked = status !== 'white' && !isFuture;
+          const colors = marked ? leafColors(style, status as Exclude<LeafStatus, 'white'>, skin.tone) : null;
+          const clipId = `${uid}l${index}`;
           const cls = [
             'leaf',
             `leaf--${status}`,
@@ -129,8 +151,44 @@ function PlantView({
               }
               onKeyDown={interactive ? (e) => onLeafKey(e, index) : undefined}
             >
-              <path className="leaf__blade" d={leaf.d} />
-              <path className="leaf__vein" d={leaf.vein} />
+              {colors ? (
+                <>
+                  <clipPath id={clipId}>
+                    <path d={leaf.d} />
+                  </clipPath>
+                  <path className="leaf__blade" d={leaf.d} style={{ fill: colors.fill }} />
+                  <g clipPath={`url(#${clipId})`} className="leaf__decor">
+                    <path d={skin.half} style={{ fill: colors.light }} />
+                    {skin.strokes.map((s, i) => (
+                      <path
+                        key={i}
+                        d={s.d}
+                        fill="none"
+                        stroke={toneColor(colors, s.tone)}
+                        strokeWidth={s.width}
+                        strokeOpacity={s.opacity}
+                        strokeLinecap="round"
+                      />
+                    ))}
+                    {skin.dots.map((d, i) => (
+                      <circle key={i} cx={d.cx} cy={d.cy} r={d.r} fill={toneColor(colors, d.tone)} opacity={d.opacity} />
+                    ))}
+                    {skin.edge && <path d={leaf.d} fill="none" stroke={colors.edge} strokeWidth={1.8} />}
+                  </g>
+                  <path className="leaf__vein" d={leaf.vein} style={{ stroke: colors.vein }} />
+                  <path className="leaf__outline" d={leaf.d} style={{ stroke: colors.dark, strokeOpacity: 0.35 }} />
+                </>
+              ) : (
+                <>
+                  <path
+                    className="leaf__blade"
+                    d={leaf.d}
+                    style={{ fill: isFuture ? UNMARKED.future : UNMARKED.fill }}
+                  />
+                  <path className="leaf__vein" d={leaf.vein} style={{ stroke: UNMARKED.vein }} />
+                  <path className="leaf__outline leaf__outline--plain" d={leaf.d} style={{ stroke: UNMARKED.line }} />
+                </>
+              )}
             </g>
           );
         })}

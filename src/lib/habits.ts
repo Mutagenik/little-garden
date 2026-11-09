@@ -67,7 +67,7 @@ export function createHabit(
     startDate: today,
     plantSeed,
     plantStyle: look.plantStyle,
-    potColor: look.potColor,
+    potColor: draft.potColor ?? look.potColor,
     leaves: consecutiveDates(today, draft.durationDays).map((date) => ({ date, status: 'white' })),
     status: 'active',
     completionSeen: false,

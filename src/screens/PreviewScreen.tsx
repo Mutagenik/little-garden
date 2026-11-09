@@ -5,7 +5,9 @@ import { useI18n } from '../i18n';
 import { formatLongDate } from '../lib/dates';
 import { createHabit, lastDate } from '../lib/habits';
 import { createId } from '../lib/random';
+import { POT_COLORS, type PotColor } from '../lib/types';
 import { Plant } from '../plant/Plant';
+import { POT_PALETTE } from '../plant/pots';
 import { goBack, navigate, resetTo } from '../state/router';
 import { useStore } from '../state/store';
 import './PreviewScreen.css';
@@ -40,8 +42,15 @@ export function PreviewScreen() {
       if (createHabit({ ...draft, id }, today, habits, { id }).plantStyle !== habit.plantStyle) break;
       id = createId();
     }
-    setDraft({ ...draft, id });
+    // Only the plant changes; the pot colour stays as shown (it has its own picker).
+    setDraft({ ...draft, id, potColor: habit.potColor });
     playSound('reroll');
+  };
+
+  const pickPot = (potColor: PotColor) => {
+    if (potColor === habit.potColor) return;
+    setDraft({ ...draft, potColor });
+    playSound('clear');
   };
   const edit = () => goBack('/new');
 
@@ -71,6 +80,32 @@ export function PreviewScreen() {
         <button type="button" className="btn btn--secondary btn--small" onClick={reroll}>
           <RefreshIcon /> {t('preview.reroll')}
         </button>
+      </div>
+
+      <div className="pot-picker" role="radiogroup" aria-label={t('preview.potColor')}>
+        <span className="pot-picker__label" aria-hidden>
+          {t('preview.potColor')}
+        </span>
+        <div className="pot-picker__swatches">
+          {POT_COLORS.map((c) => {
+            const p = POT_PALETTE[c];
+            const selected = c === habit.potColor;
+            return (
+              <button
+                key={c}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                aria-label={t(`pots.${c}`)}
+                title={t(`pots.${c}`)}
+                className={`pot-picker__swatch ${selected ? 'is-selected' : ''}`}
+                onClick={() => pickPot(c)}
+              >
+                <span style={{ background: `linear-gradient(90deg, ${p.base} 45%, ${p.shade})` }} />
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <section className="preview__info">

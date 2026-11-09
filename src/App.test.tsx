@@ -42,7 +42,10 @@ describe('Little Garden app', () => {
     await user.click(screen.getAllByRole('button', { name: 'Edit habit' })[1]);
     expect(await screen.findByLabelText('Habit name')).toHaveValue('No coffee');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
-    const previewLeaves = Array.from(document.querySelectorAll('[data-leaf-index]')).map((n) => n.outerHTML);
+    const shapes = (root: ParentNode) =>
+      Array.from(root.querySelectorAll('.leaf__blade')).map((n) => n.getAttribute('d'));
+    const previewLeaves = shapes(document);
+    const previewPot = document.querySelector('svg[data-pot-color]')!.getAttribute('data-pot-color');
 
     await user.click(await screen.findByRole('button', { name: "Let's grow!" }));
     const tile = await screen.findByRole('button', { name: /No coffee, day 1 of 9, 0 of 9 days marked/ });
@@ -50,10 +53,42 @@ describe('Little Garden app', () => {
     expect(stored()).toHaveLength(1);
     expect(stored()[0].startDate).toBe('2026-11-09');
     // The planted plant is exactly the previewed one.
-    const roomLeaves = Array.from(tile.querySelectorAll('[data-leaf-index]')).map((n) => n.outerHTML);
-    expect(roomLeaves.map((h) => h.replace(/ class="[^"]*"/, ''))).toEqual(
-      previewLeaves.map((h) => h.replace(/ class="[^"]*"/, '')),
-    );
+    expect(shapes(tile)).toEqual(previewLeaves);
+    expect(tile.querySelector('svg')!.getAttribute('data-pot-color')).toBe(previewPot);
+  });
+
+  it('lets you choose the pot colour, independently of "Try another plant"', async () => {
+    const user = userEvent.setup();
+    startApp('2026-11-09');
+    await user.click(screen.getByRole('button', { name: /grow your first friend/i }));
+    await user.type(screen.getByLabelText('Habit name'), 'Tea');
+    await user.type(screen.getByLabelText('Success condition'), 'Green tea instead of coffee.');
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    await screen.findByText('Meet your new friend');
+
+    const group = screen.getByRole('radiogroup', { name: 'Pot colour' });
+    const radios = within(group).getAllByRole('radio');
+    expect(radios).toHaveLength(6);
+    const pot = () => document.querySelector('svg[data-pot-color]')!.getAttribute('data-pot-color');
+    const target = pot() === 'sage' ? 'Dusty pink' : 'Sage';
+    const targetKey = target === 'Sage' ? 'sage' : 'dustyPink';
+    await user.click(within(group).getByRole('radio', { name: target }));
+    expect(pot()).toBe(targetKey);
+    expect(within(group).getByRole('radio', { name: target })).toHaveAttribute('aria-checked', 'true');
+
+    // Trying another plant keeps the chosen pot colour.
+    const style = document.querySelector('svg[data-plant-style]')!.getAttribute('data-plant-style');
+    await user.click(screen.getByRole('button', { name: 'Try another plant' }));
+    expect(document.querySelector('svg[data-plant-style]')!.getAttribute('data-plant-style')).not.toBe(style);
+    expect(pot()).toBe(targetKey);
+
+    // Editing the habit keeps it too, and it is what gets planted.
+    await user.click(screen.getAllByRole('button', { name: 'Edit habit' })[1]);
+    await user.click(await screen.findByRole('button', { name: 'Continue' }));
+    expect(pot()).toBe(targetKey);
+    await user.click(screen.getByRole('button', { name: "Let's grow!" }));
+    await screen.findByRole('button', { name: /Tea, day 1 of 7/ });
+    expect(stored()[0].potColor).toBe(targetKey);
   });
 
   it('"Try another plant" grows a different kind of plant, and that one gets planted', async () => {
