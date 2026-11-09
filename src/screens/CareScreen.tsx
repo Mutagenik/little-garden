@@ -60,7 +60,7 @@ function CareView({ habit }: { habit: Habit }) {
           <BackIcon /> {t('nav.room')}
         </button>
         <h1 className="page__title">{habit.name}</h1>
-        <p className="care__condition">“{habit.successCondition}”</p>
+        {habit.successCondition && <p className="care__condition">“{habit.successCondition}”</p>}
       </header>
 
       <div className="care__stage">
@@ -248,7 +248,7 @@ function EditHabitDialog({
   const { t } = useI18n();
   const [name, setName] = useState(habit.name);
   const [condition, setCondition] = useState(habit.successCondition);
-  const valid = name.trim() && condition.trim();
+  const valid = Boolean(name.trim());
   return (
     <Modal title={t('care.editTitle')} onClose={onClose}>
       <form
@@ -272,18 +272,24 @@ function EditHabitDialog({
           {!name.trim() && <span className="field__error">{t('create.nameRequired')}</span>}
         </div>
         <div className="field">
-          <label className="field__label" htmlFor="edit-condition">
-            {t('create.conditionLabel')}
-          </label>
+          <div className="field__label-row">
+            <label className="field__label" htmlFor="edit-condition">
+              {t('create.conditionLabel')}
+            </label>
+            <span className="field__optional" id="edit-condition-optional">
+              {t('create.optional')}
+            </span>
+          </div>
           <textarea
             id="edit-condition"
             className="field__input"
             rows={2}
             maxLength={200}
             value={condition}
+            placeholder={t('create.conditionPlaceholder')}
             onChange={(e) => setCondition(e.target.value)}
+            aria-describedby="edit-condition-optional"
           />
-          {!condition.trim() && <span className="field__error">{t('create.conditionRequired')}</span>}
         </div>
         <p className="field__hint">{t('care.durationLocked')}</p>
         <div className="modal__actions">

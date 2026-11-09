@@ -53,7 +53,7 @@ function reducer(state: State, action: Action): State {
       return mapHabit(state, action.id, (h) => {
         const name = action.name.trim();
         const successCondition = action.successCondition.trim();
-        if (!name || !successCondition) return h;
+        if (!name) return h; // the success condition may be empty
         return { ...h, name, successCondition };
       });
     case 'delete':

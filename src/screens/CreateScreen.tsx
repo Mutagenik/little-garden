@@ -18,12 +18,10 @@ export function CreateScreen() {
   const [submitted, setSubmitted] = useState(false);
 
   const nameError = !name.trim() ? t('create.nameRequired') : null;
-  const conditionError = !condition.trim() ? t('create.conditionRequired') : null;
-
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
-    if (nameError || conditionError) return;
+    if (nameError) return;
     setDraft({
       id: draft?.id,
       potColor: draft?.potColor,
@@ -77,9 +75,14 @@ export function CreateScreen() {
         </div>
 
         <div className="field">
-          <label className="field__label" htmlFor="habit-condition">
-            {t('create.conditionLabel')}
-          </label>
+          <div className="field__label-row">
+            <label className="field__label" htmlFor="habit-condition">
+              {t('create.conditionLabel')}
+            </label>
+            <span className="field__optional" id="habit-condition-optional">
+              {t('create.optional')}
+            </span>
+          </div>
           <textarea
             id="habit-condition"
             className="field__input"
@@ -88,14 +91,8 @@ export function CreateScreen() {
             rows={2}
             placeholder={t('create.conditionPlaceholder')}
             onChange={(e) => setCondition(e.target.value)}
-            aria-invalid={submitted && !!conditionError}
-            aria-describedby={submitted && conditionError ? 'habit-condition-error' : undefined}
+            aria-describedby="habit-condition-optional"
           />
-          {submitted && conditionError && (
-            <span className="field__error" id="habit-condition-error">
-              {conditionError}
-            </span>
-          )}
         </div>
 
         <div className="field">

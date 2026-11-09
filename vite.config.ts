@@ -39,7 +39,7 @@ export default defineConfig({
         // service worker never touches, so updates cannot wipe it.
         // woff2 only: every browser that can install a PWA supports it, and Cyrillic subsets are
         // included so Russian can be added later without breaking offline fonts.
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2,mp3}'],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,

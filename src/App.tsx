@@ -1,4 +1,5 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
+import { playWelcomeSound } from './lib/welcomeSound';
 import { TabBar } from './components/TabBar';
 import { I18nProvider } from './i18n';
 import { compareDates } from './lib/dates';
@@ -26,6 +27,11 @@ export function App({ storage }: { storage?: Storage }) {
 
 function LocalizedApp() {
   const { data } = useStore();
+  // Welcome chime once per app load (if sounds are on).
+  const soundOnAtStart = useRef(data.settings.sound);
+  useEffect(() => {
+    if (soundOnAtStart.current) playWelcomeSound();
+  }, []);
   return (
     <I18nProvider language={data.settings.language}>
       <Shell />

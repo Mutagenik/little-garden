@@ -5,6 +5,7 @@ import { setTodayProvider } from './lib/dates';
 import { createHabit, setLeafStatus } from './lib/habits';
 import { DATA_KEY, saveData } from './lib/storage';
 import { SCHEMA_VERSION, type Habit } from './lib/types';
+import { resetWelcomeForTests } from './lib/welcomeSound';
 
 function seed(habits: Habit[]) {
   saveData({ schemaVersion: SCHEMA_VERSION, habits, settings: { language: 'en', sound: true } }, localStorage);
@@ -137,6 +138,47 @@ describe('Little Garden app', () => {
       }
       unmount();
     }
+  });
+
+  it('plays the welcome chime when the app opens, unless sounds are off', () => {
+    const play = vi.spyOn(window.HTMLMediaElement.prototype, 'play');
+    const { unmount } = startApp('2026-11-09');
+    expect(play).toHaveBeenCalledTimes(1);
+    expect((play.mock.instances[0] as HTMLAudioElement).src).toMatch(/welcome.*\.mp3$/);
+    unmount();
+
+    play.mockClear();
+    resetWelcomeForTests();
+    saveData({ schemaVersion: SCHEMA_VERSION, habits: [], settings: { language: 'en', sound: false } }, localStorage);
+    startApp('2026-11-09');
+    expect(play).not.toHaveBeenCalled();
+  });
+
+  it('allows a habit without a success condition, and clearing it later', async () => {
+    const user = userEvent.setup();
+    startApp('2026-11-09');
+    await user.click(screen.getByRole('button', { name: /grow your first friend/i }));
+    expect(screen.getByText('optional')).toBeInTheDocument();
+    await user.type(screen.getByLabelText('Habit name'), 'Stretch');
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    await screen.findByText('Meet your new friend');
+    expect(document.querySelector('.preview__condition')).toBeNull();
+    await user.click(screen.getByRole('button', { name: "Let's grow!" }));
+    const tile = await screen.findByRole('button', { name: /Stretch, day 1 of 7/ });
+    expect(stored()[0].successCondition).toBe('');
+
+    // Daily care shows no empty quote; editing can add and then clear the condition.
+    await user.click(tile);
+    expect(document.querySelector('.care__condition')).toBeNull();
+    await user.click(screen.getByRole('button', { name: 'Edit' }));
+    await user.type(screen.getByLabelText('Success condition'), 'Ten minutes.');
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+    expect(screen.getByText('“Ten minutes.”')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Edit' }));
+    await user.clear(screen.getByLabelText('Success condition'));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+    expect(stored()[0].successCondition).toBe('');
+    expect(document.querySelector('.care__condition')).toBeNull();
   });
 
   it('remembers the sounds setting', async () => {

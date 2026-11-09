@@ -110,7 +110,7 @@ export function PreviewScreen() {
 
       <section className="preview__info">
         <h2 className="preview__name">{habit.name}</h2>
-        <p className="preview__condition">“{habit.successCondition}”</p>
+        {habit.successCondition && <p className="preview__condition">“{habit.successCondition}”</p>}
         <p className="preview__leaves">{t('preview.leavesEqualDays', { n: habit.durationDays })}</p>
         <p className="preview__dates">{t('preview.startsEnds', { date: formatLongDate(lastDate(habit), locale) })}</p>
       </section>

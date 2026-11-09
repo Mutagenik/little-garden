@@ -105,7 +105,7 @@ export function GardenDetailScreen({ id }: { id: string }) {
           <BackIcon /> {t('nav.garden')}
         </button>
         <h1 className="page__title">{habit.name}</h1>
-        <p className="care__condition">“{habit.successCondition}”</p>
+        {habit.successCondition && <p className="care__condition">“{habit.successCondition}”</p>}
       </header>
 
       <div className="garden-detail__stage">

@@ -50,7 +50,7 @@ export const en = {
     decrease: 'One day fewer',
     increase: 'One day more',
     nameRequired: 'Please give your habit a name.',
-    conditionRequired: 'Please describe what success looks like.',
+    optional: 'optional',
     continue: 'Continue',
   },
   preview: {
@@ -136,7 +136,8 @@ export const en = {
     language: 'Language',
     languageHint: 'More languages are coming.',
     soundTitle: 'Sounds',
-    soundText: "Soft chimes when you plant a friend and colour a leaf. Your phone's media volume sets how loud they are.",
+    soundText:
+      "A welcome chime when the app opens, and soft chimes when you plant a friend and colour a leaf. Your phone's media volume sets how loud they are.",
     backupTitle: 'Backup',
     backupText:
       'Your plants are stored only on this device. Save a backup file now and then, so nothing is lost if the phone is reset.',

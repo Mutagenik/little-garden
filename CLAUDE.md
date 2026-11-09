@@ -31,7 +31,7 @@ be added later.
 | Route (hash) | Screen | File |
 |---|---|---|
 | `#/room` (default) | **My Room**: cosy room scene (window + sill + wooden shelves) with all *active* plants. Tap a pot to open Daily Care. "Grow a new friend" button. Has an empty-state illustration. | `src/screens/RoomScreen.tsx` |
-| `#/new` | **Create**: habit name, success condition, duration stepper/slider (4–15). | `src/screens/CreateScreen.tsx` |
+| `#/new` | **Create**: habit name (required), success condition (**optional**, may be empty; then no quote is shown anywhere), duration stepper/slider (4–15). | `src/screens/CreateScreen.tsx` |
 | `#/new/preview` | **Meet your new friend**: the exact plant that will be planted (white leaves), "N leaves = N days", end date. **Try another plant** rerolls the plant type (keeps the pot colour). **Pot colour** swatches (6) change only the pot. **Let's grow!** creates the habit. **Edit habit** goes back to the form with all values kept (including plant and pot). | `src/screens/PreviewScreen.tsx` |
 | `#/plant/:id` | **Daily Care**: large interactive plant. Tap a leaf → bottom sheet with its date and *Mark green / Mark ochre / Clear*. Future leaves show only a note. Also facts, day dots, Edit (name + condition), Delete. | `src/screens/CareScreen.tsx` |
 | (overlay) | **Completion screen**: shown once per finished plant. All green → petals + congratulation; otherwise a neutral, kind message. Stats. | `src/screens/CompletionScreen.tsx` |
@@ -155,7 +155,7 @@ AppData  = { schemaVersion: 2, habits: Habit[], settings: { language: 'en', soun
 Habit = {
   id: string                 // random hex (createId)
   name: string               // editable
-  successCondition: string   // editable
+  successCondition: string   // editable, optional ('' allowed)
   durationDays: number       // 4–15, LOCKED after creation
   startDate: 'YYYY-MM-DD'    // creation date = day 1
   plantSeed: number          // hashString(id), FNV-1a, 32-bit
@@ -304,7 +304,16 @@ keep their stored style.
 
 ---
 
-## 10. Sounds (`src/lib/sound.ts`)
+## 10. Sounds (`src/lib/sound.ts`, `src/lib/welcomeSound.ts`)
+
+**Welcome chime:** the owner's recording `src/assets/sounds/welcome.mp3` (≈3 s; original in the
+git-ignored `Improvements/` folder) plays once per app load from `LocalizedApp` in `App.tsx`, only
+if `settings.sound` is on. Volume `WELCOME_VOLUME` = 0.6. Browsers may block audio before the first
+touch: then it plays on the first tap/key press, but only within `WELCOME_GRACE_MS` (15 s) and only
+if sounds are still on. mp3 files are precached for offline use (`vite.config.ts` globPatterns).
+Tests stub `HTMLMediaElement.play` in `src/test/setup.ts`.
+
+**UI sounds:**
 
 Synthesised with the Web Audio API (no files, works offline): `plant` (rising arpeggio), `green`
 (two-note chime), `ochre` (warm low tone, never an "error" buzzer), `clear` (tiny tick), `reroll`
@@ -335,7 +344,7 @@ Browsers allow audio only after a user tap, so sounds are only played from tap h
 
 ## 12. Testing
 
-`npm test` runs 75 tests (Vitest + jsdom):
+`npm test` runs 81 tests (Vitest + jsdom):
 - `plant/generatePlant.test.tsx`: exactly N leaves (data and rendered DOM) for every style and
   N = 4…15, determinism, touch spacing ≥ 22, hit points inside the canvas, nearest-leaf
   selection, upright order.
