@@ -30,7 +30,7 @@ function LocalizedApp() {
   // Welcome chime once per app load (if sounds are on).
   const soundOnAtStart = useRef(data.settings.sound);
   useEffect(() => {
-    if (soundOnAtStart.current) playWelcomeSound();
+    if (soundOnAtStart.current) void playWelcomeSound();
   }, []);
   return (
     <I18nProvider language={data.settings.language}>

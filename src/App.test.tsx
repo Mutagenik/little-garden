@@ -140,18 +140,17 @@ describe('Little Garden app', () => {
     }
   });
 
-  it('plays the welcome chime when the app opens, unless sounds are off', () => {
-    const play = vi.spyOn(window.HTMLMediaElement.prototype, 'play');
+  it('starts the welcome chime when the app opens, unless sounds are off', async () => {
+    // jsdom has no Web Audio, so the attempt ends as "unavailable" — what matters is that it ran.
     const { unmount } = startApp('2026-11-09');
-    expect(play).toHaveBeenCalledTimes(1);
-    expect((play.mock.instances[0] as HTMLAudioElement).src).toMatch(/welcome.*\.mp3$/);
+    await waitFor(() => expect(document.documentElement.dataset.welcome).toBe('unavailable'));
     unmount();
 
-    play.mockClear();
     resetWelcomeForTests();
     saveData({ schemaVersion: SCHEMA_VERSION, habits: [], settings: { language: 'en', sound: false } }, localStorage);
     startApp('2026-11-09');
-    expect(play).not.toHaveBeenCalled();
+    await new Promise((r) => setTimeout(r, 10));
+    expect(document.documentElement.dataset.welcome).toBeUndefined();
   });
 
   it('allows a habit without a success condition, and clearing it later', async () => {

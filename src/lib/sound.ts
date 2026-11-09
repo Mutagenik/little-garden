@@ -19,6 +19,11 @@ export function isSoundEnabled(): boolean {
   return enabled;
 }
 
+/** The app's single shared AudioContext (created lazily). */
+export function getAudioContext(): AudioContext | null {
+  return getContext();
+}
+
 function getContext(): AudioContext | null {
   if (ctx) return ctx;
   const Ctor =

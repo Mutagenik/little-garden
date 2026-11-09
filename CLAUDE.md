@@ -308,10 +308,18 @@ keep their stored style.
 
 **Welcome chime:** the owner's recording `src/assets/sounds/welcome.mp3` (≈3 s; original in the
 git-ignored `Improvements/` folder) plays once per app load from `LocalizedApp` in `App.tsx`, only
-if `settings.sound` is on. Volume `WELCOME_VOLUME` = 0.6. Browsers may block audio before the first
-touch: then it plays on the first tap/key press, but only within `WELCOME_GRACE_MS` (15 s) and only
-if sounds are still on. mp3 files are precached for offline use (`vite.config.ts` globPatterns).
-Tests stub `HTMLMediaElement.play` in `src/test/setup.ts`.
+if `settings.sound` is on. It is fetched and decoded with **Web Audio** on the shared
+`getAudioContext()` and played at `WELCOME_VOLUME` = 0.6.
+- **Autoplay policy:** browsers allow sound without a touch only in some cases (installed app,
+  frequently used site). Otherwise the context stays `suspended` and the chime plays on the first
+  **user-activation** event, i.e. `click`, `pointerup`, `touchend` or `keydown`. **Not**
+  `pointerdown`/`touchstart` from a finger: that was the original bug, so the chime never played on
+  phones. It retries on every interaction until audio unlocks, within `WELCOME_GRACE_MS` (60 s),
+  and only if sounds are still on.
+- **Diagnostics:** `<html data-welcome="…">` shows `loading | played | waiting-for-tap |
+  played-after-tap | skipped | unavailable`. Check it in the browser console on a device.
+- mp3 files are precached for offline use (`vite.config.ts` globPatterns). Unit tests use a fake
+  AudioContext that is locked except during a simulated gesture (`welcomeSound.test.ts`).
 
 **UI sounds:**
 
@@ -344,7 +352,7 @@ Browsers allow audio only after a user tap, so sounds are only played from tap h
 
 ## 12. Testing
 
-`npm test` runs 81 tests (Vitest + jsdom):
+`npm test` runs 83 tests (Vitest + jsdom):
 - `plant/generatePlant.test.tsx`: exactly N leaves (data and rendered DOM) for every style and
   N = 4…15, determinism, touch spacing ≥ 22, hit points inside the canvas, nearest-leaf
   selection, upright order.
