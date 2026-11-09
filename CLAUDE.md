@@ -42,6 +42,13 @@ be added later.
 
 The bottom tab bar (`src/components/TabBar.tsx`) has three tabs: My Room, My Garden, Settings.
 
+**Brand logo:** the owner's logo ("Jesenika", lavender flower + wordmark) appears in the top-right
+corner of the **My Room, My Garden and Settings** headers only, via `<BrandLogo/>`
+(`src/components/BrandLogo.tsx`, header class `page__header--brand`). The original artwork is
+`logo/Logo.png` (1250×1428, transparent). `src/assets/logo.png` is a trimmed 173×192 copy,
+displayed 52 px wide. To replace the logo, regenerate that copy with `sharp` (trim, resize to
+192 px tall, PNG palette).
+
 ---
 
 ## 2. Core rules (invariants) — never break these

@@ -10,6 +10,7 @@ export const en = {
   },
   app: {
     name: 'Little Garden',
+    brandLogoAlt: 'Jesenika',
   },
   nav: {
     room: 'My Room',

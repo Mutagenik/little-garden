@@ -1,0 +1,16 @@
+/* Sits in the top-right corner of a .page__header--brand header. */
+.page__header--brand {
+  position: relative;
+  padding-right: 68px; /* keep long titles clear of the logo */
+}
+
+.brand-logo {
+  position: absolute;
+  top: -2px;
+  right: 0;
+  width: 52px;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}

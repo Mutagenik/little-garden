@@ -1,3 +1,4 @@
+import { BrandLogo } from '../components/BrandLogo';
 import { PlusIcon } from '../components/Icons';
 import { BookStack, WateringCan, WindowArt } from '../components/RoomArt';
 import { useI18n } from '../i18n';
@@ -22,9 +23,10 @@ export function RoomScreen() {
 
   return (
     <main className="page room">
-      <header className="page__header room__header">
+      <header className="page__header page__header--brand room__header">
         <p className="room__date">{formatWeekdayDate(today, locale)}</p>
         <h1 className="page__title">{t('room.title')}</h1>
+        <BrandLogo />
       </header>
 
       {plants.length === 0 ? (

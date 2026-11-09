@@ -82,6 +82,22 @@ describe('Little Garden app', () => {
     expect(stored()[0].plantStyle).toBe(chosen);
   });
 
+  it('shows the brand logo only on My Room, My Garden and Settings', async () => {
+    seed([createHabit({ name: 'Walk', successCondition: 'Walk', durationDays: 5 }, '2026-11-09', [], { id: 'w' })]);
+    const cases: [string, boolean][] = [
+      ['#/room', true],
+      ['#/garden', true],
+      ['#/settings', true],
+      ['#/plant/w', false],
+      ['#/new', false],
+    ];
+    for (const [hash, visible] of cases) {
+      const { unmount } = startApp('2026-11-09', hash);
+      expect(screen.queryAllByRole('img', { name: 'Jesenika' }), hash).toHaveLength(visible ? 1 : 0);
+      unmount();
+    }
+  });
+
   it('remembers the sounds setting', async () => {
     const user = userEvent.setup();
     startApp('2026-11-09', '#/settings');

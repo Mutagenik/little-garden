@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { BrandLogo } from '../components/BrandLogo';
 import { CompletionStats, DayResults } from '../components/HabitFacts';
 import { BackIcon } from '../components/Icons';
 import { ConfirmDialog } from '../components/Modal';
@@ -18,9 +19,10 @@ export function GardenScreen() {
 
   return (
     <main className="page garden">
-      <header className="page__header">
+      <header className="page__header page__header--brand">
         <h1 className="page__title">{t('garden.title')}</h1>
         <p className="page__subtitle">{t('garden.intro')}</p>
+        <BrandLogo />
       </header>
 
       <div className="greenhouse">

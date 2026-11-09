@@ -1,4 +1,5 @@
 import { useRef, useState, type ChangeEvent } from 'react';
+import { BrandLogo } from '../components/BrandLogo';
 import { ConfirmDialog } from '../components/Modal';
 import { dictionaries, useI18n } from '../i18n';
 import { playSound, setSoundEnabled } from '../lib/sound';
@@ -45,8 +46,9 @@ export function SettingsScreen() {
 
   return (
     <main className="page settings">
-      <header className="page__header">
+      <header className="page__header page__header--brand">
         <h1 className="page__title">{t('settings.title')}</h1>
+        <BrandLogo />
       </header>
 
       <section className="card settings__section">
