@@ -7,7 +7,7 @@ function sampleData(): AppData {
   a = setLeafStatus(a, 0, 'green', '2026-11-05');
   a = setLeafStatus(a, 2, 'ochre', '2026-11-05');
   const b = createHabit({ name: 'Walk', successCondition: '30 minutes outside.', durationDays: 4 }, '2026-11-05', [a]);
-  return { schemaVersion: SCHEMA_VERSION, habits: [a, b], settings: { language: 'en' } };
+  return { schemaVersion: SCHEMA_VERSION, habits: [a, b], settings: { language: 'en', sound: true } };
 }
 
 describe('storage', () => {
@@ -79,6 +79,21 @@ describe('storage', () => {
     // Saved in the new format, with the original kept as a backup.
     expect(JSON.parse(localStorage.getItem(DATA_KEY)!).schemaVersion).toBe(SCHEMA_VERSION);
     expect(Object.keys(localStorage).some((k) => k.startsWith(BACKUP_PREFIX))).toBe(true);
+  });
+
+  it('upgrades version-1 data (before sounds existed) without losing plants', () => {
+    const current = sampleData();
+    const v1 = { schemaVersion: 1, habits: current.habits, settings: { language: 'en' } };
+    localStorage.setItem(DATA_KEY, JSON.stringify(v1));
+    const data = loadData(localStorage);
+    expect(data.schemaVersion).toBe(2);
+    expect(data.settings).toEqual({ language: 'en', sound: true });
+    expect(data.habits).toEqual(current.habits);
+    expect(JSON.parse(localStorage.getItem(DATA_KEY)!).schemaVersion).toBe(2);
+    expect(Object.keys(localStorage).some((k) => k.startsWith(BACKUP_PREFIX))).toBe(true);
+    // An old exported backup can still be imported.
+    const imported = importJson(JSON.stringify(v1));
+    expect(imported.ok && imported.data.habits).toEqual(current.habits);
   });
 
   it('migration is a no-op for current data', () => {

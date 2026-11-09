@@ -1,6 +1,7 @@
 import { useRef, useState, type ChangeEvent } from 'react';
 import { ConfirmDialog } from '../components/Modal';
 import { dictionaries, useI18n } from '../i18n';
+import { playSound, setSoundEnabled } from '../lib/sound';
 import { exportJson, importJson } from '../lib/storage';
 import type { AppData, LanguageCode } from '../lib/types';
 import { useStore } from '../state/store';
@@ -8,7 +9,7 @@ import './SettingsScreen.css';
 
 export function SettingsScreen() {
   const { t, language } = useI18n();
-  const { data, today, replaceData, resetAll, setLanguage } = useStore();
+  const { data, today, replaceData, resetAll, setLanguage, setSound } = useStore();
   const fileRef = useRef<HTMLInputElement>(null);
   const [pendingImport, setPendingImport] = useState<AppData | null>(null);
   const [resetOpen, setResetOpen] = useState(false);
@@ -63,6 +64,28 @@ export function SettingsScreen() {
             ))}
           </select>
           <span className="field__hint">{t('settings.languageHint')}</span>
+        </label>
+      </section>
+
+      <section className="card settings__section">
+        <label className="switch-row">
+          <span className="switch-row__text">
+            <span className="settings__heading">{t('settings.soundTitle')}</span>
+            <span className="settings__text">{t('settings.soundText')}</span>
+          </span>
+          <input
+            type="checkbox"
+            role="switch"
+            className="switch"
+            checked={data.settings.sound}
+            onChange={(e) => {
+              setSound(e.target.checked);
+              if (e.target.checked) {
+                setSoundEnabled(true);
+                playSound('green');
+              }
+            }}
+          />
         </label>
       </section>
 

@@ -26,7 +26,7 @@ export const BACKUP_PREFIX = 'little-garden:backup:';
 const LEGACY_KEYS = ['little-garden', 'littleGarden', 'little-garden-data', 'myGarden'];
 
 export function emptyData(): AppData {
-  return { schemaVersion: SCHEMA_VERSION, habits: [], settings: { language: 'en' } };
+  return { schemaVersion: SCHEMA_VERSION, habits: [], settings: { language: 'en', sound: true } };
 }
 
 type ParseResult = { ok: true; data: AppData } | { ok: false; error: string };
@@ -73,7 +73,8 @@ export function validateAppData(data: unknown): string | null {
     if (ids.has(id)) return 'two plants share the same id';
     ids.add(id);
   }
-  if (!isObject(data.settings) || data.settings.language !== 'en') return 'settings are invalid';
+  if (!isObject(data.settings) || data.settings.language !== 'en' || typeof data.settings.sound !== 'boolean')
+    return 'settings are invalid';
   return null;
 }
 
@@ -149,6 +150,11 @@ const migrations: Record<number, (data: Record<string, unknown>) => Record<strin
       if (h && !habits.some((x) => x.id === h.id)) habits.push(h);
     });
     return { schemaVersion: 1, habits, settings: { language: 'en' } };
+  },
+  // v1 → v2: sounds setting added (on by default). Plants are unchanged.
+  1: (data) => {
+    const settings = isObject(data.settings) ? data.settings : {};
+    return { ...data, schemaVersion: 2, settings: { language: 'en', ...settings, sound: true } };
   },
 };
 

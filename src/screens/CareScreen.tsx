@@ -3,6 +3,7 @@ import { BackIcon } from '../components/Icons';
 import { ConfirmDialog, Modal } from '../components/Modal';
 import { useI18n } from '../i18n';
 import { formatLongDate, formatShortDate } from '../lib/dates';
+import { playSound } from '../lib/sound';
 import { canMarkLeaf, dayNumber, daysRemaining, habitStats, lastDate, leafState, todayIndex } from '../lib/habits';
 import type { Habit, LeafStatus } from '../lib/types';
 import { Plant } from '../plant/Plant';
@@ -136,6 +137,7 @@ function CareView({ habit }: { habit: Habit }) {
           today={today}
           onPick={(status) => {
             setLeaf(habit.id, selected, status);
+            playSound(status === 'white' ? 'clear' : status);
             setSelected(null);
           }}
           onClose={() => setSelected(null)}

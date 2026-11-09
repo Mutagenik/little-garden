@@ -7,7 +7,7 @@ import { DATA_KEY, saveData } from './lib/storage';
 import { SCHEMA_VERSION, type Habit } from './lib/types';
 
 function seed(habits: Habit[]) {
-  saveData({ schemaVersion: SCHEMA_VERSION, habits, settings: { language: 'en' } }, localStorage);
+  saveData({ schemaVersion: SCHEMA_VERSION, habits, settings: { language: 'en', sound: true } }, localStorage);
 }
 const stored = (): Habit[] => JSON.parse(localStorage.getItem(DATA_KEY)!).habits;
 
@@ -54,6 +54,42 @@ describe('Little Garden app', () => {
     expect(roomLeaves.map((h) => h.replace(/ class="[^"]*"/, ''))).toEqual(
       previewLeaves.map((h) => h.replace(/ class="[^"]*"/, '')),
     );
+  });
+
+  it('"Try another plant" grows a different kind of plant, and that one gets planted', async () => {
+    const user = userEvent.setup();
+    startApp('2026-11-09');
+    await user.click(screen.getByRole('button', { name: /grow your first friend/i }));
+    await user.type(screen.getByLabelText('Habit name'), 'Yoga');
+    await user.type(screen.getByLabelText('Success condition'), 'Ten minutes of yoga.');
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    const style = () => document.querySelector('svg[data-plant-style]')!.getAttribute('data-plant-style');
+    await screen.findByText('Meet your new friend');
+    const seen = new Set<string | null>([style()]);
+    for (let i = 0; i < 4; i++) {
+      const before = style();
+      await user.click(screen.getByRole('button', { name: 'Try another plant' }));
+      expect(style()).not.toBe(before);
+      expect(document.querySelectorAll('[data-leaf-index]')).toHaveLength(7);
+      seen.add(style());
+    }
+    expect(seen.size).toBeGreaterThanOrEqual(3);
+
+    const chosen = style();
+    await user.click(screen.getByRole('button', { name: "Let's grow!" }));
+    await screen.findByRole('button', { name: /Yoga, day 1 of 7/ });
+    expect(stored()[0].plantStyle).toBe(chosen);
+  });
+
+  it('remembers the sounds setting', async () => {
+    const user = userEvent.setup();
+    startApp('2026-11-09', '#/settings');
+    const toggle = screen.getByRole('switch', { name: /sounds/i });
+    expect(toggle).toBeChecked();
+    await user.click(toggle);
+    expect(toggle).not.toBeChecked();
+    expect(JSON.parse(localStorage.getItem(DATA_KEY)!).settings.sound).toBe(false);
   });
 
   it('marks yesterday, changes and clears it, and refuses future days', async () => {
@@ -182,7 +218,7 @@ describe('Little Garden app', () => {
     startApp('2026-11-09', '#/settings');
     const backup = createHabit({ name: 'Yoga', successCondition: 'Yoga', durationDays: 6 }, '2026-11-08', []);
     const file = new File(
-      [JSON.stringify({ schemaVersion: SCHEMA_VERSION, habits: [backup], settings: { language: 'en' } })],
+      [JSON.stringify({ schemaVersion: SCHEMA_VERSION, habits: [backup], settings: { language: 'en', sound: true } })],
       'backup.json',
       { type: 'application/json' },
     );

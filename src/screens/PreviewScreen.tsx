@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
-import { BackIcon } from '../components/Icons';
+import { BackIcon, RefreshIcon } from '../components/Icons';
+import { playSound } from '../lib/sound';
 import { useI18n } from '../i18n';
 import { formatLongDate } from '../lib/dates';
 import { createHabit, lastDate } from '../lib/habits';
@@ -28,7 +29,19 @@ export function PreviewScreen() {
 
   const grow = () => {
     store.createHabit(draft);
+    playSound('plant');
     resetTo('/room');
+  };
+
+  /** Reserve a new id (= new seed) until the plant grows in a different style. */
+  const reroll = () => {
+    let id = createId();
+    for (let i = 0; i < 30; i++) {
+      if (createHabit({ ...draft, id }, today, habits, { id }).plantStyle !== habit.plantStyle) break;
+      id = createId();
+    }
+    setDraft({ ...draft, id });
+    playSound('reroll');
   };
   const edit = () => goBack('/new');
 
@@ -52,6 +65,12 @@ export function PreviewScreen() {
             crop
           />
         </div>
+      </div>
+
+      <div className="preview__reroll">
+        <button type="button" className="btn btn--secondary btn--small" onClick={reroll}>
+          <RefreshIcon /> {t('preview.reroll')}
+        </button>
       </div>
 
       <section className="preview__info">

@@ -58,6 +58,7 @@ export const en = {
     startsEnds: 'Starts today, ends on {date}',
     grow: "Let's grow!",
     edit: 'Edit habit',
+    reroll: 'Try another plant',
   },
   care: {
     started: 'Started',
@@ -124,6 +125,8 @@ export const en = {
     title: 'Settings',
     language: 'Language',
     languageHint: 'More languages are coming.',
+    soundTitle: 'Sounds',
+    soundText: "Soft chimes when you plant a friend and colour a leaf. Your phone's media volume sets how loud they are.",
     backupTitle: 'Backup',
     backupText:
       'Your plants are stored only on this device. Save a backup file now and then, so nothing is lost if the phone is reset.',

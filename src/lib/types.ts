@@ -42,9 +42,11 @@ export type LanguageCode = 'en';
 
 export interface Settings {
   language: LanguageCode;
+  /** Gentle UI sounds on/off (added in schema version 2). */
+  sound: boolean;
 }
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 export interface AppData {
   schemaVersion: typeof SCHEMA_VERSION;

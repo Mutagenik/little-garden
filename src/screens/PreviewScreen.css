@@ -15,6 +15,18 @@
   width: min(78vw, 300px);
 }
 
+.preview__reroll {
+  display: flex;
+  justify-content: center;
+  margin-top: calc(var(--space-5) * -1 - 5px);
+  position: relative;
+  z-index: 1;
+}
+
+.preview__reroll .btn {
+  box-shadow: var(--shadow-card);
+}
+
 .preview__info {
   text-align: center;
   display: flex;

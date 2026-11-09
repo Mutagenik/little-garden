@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, type ReactNode } from 'react';
 import { getToday, type DateString } from '../lib/dates';
 import { createHabit as buildHabit, refreshStatuses, setLeafStatus } from '../lib/habits';
+import { setSoundEnabled } from '../lib/sound';
 import { emptyData, loadData, saveData } from '../lib/storage';
 import type { AppData, Habit, HabitDraft, LanguageCode, LeafStatus } from '../lib/types';
 
@@ -19,6 +20,7 @@ type Action =
   | { type: 'seen'; id: string }
   | { type: 'replace'; data: AppData }
   | { type: 'language'; language: LanguageCode }
+  | { type: 'sound'; on: boolean }
   | { type: 'draft'; draft: HabitDraft | null };
 
 function withHabits(state: State, habits: Habit[]): State {
@@ -65,6 +67,8 @@ function reducer(state: State, action: Action): State {
       return { ...state, data: { ...action.data, habits: refreshStatuses(action.data.habits, state.today) } };
     case 'language':
       return { ...state, data: { ...state.data, settings: { ...state.data.settings, language: action.language } } };
+    case 'sound':
+      return { ...state, data: { ...state.data, settings: { ...state.data.settings, sound: action.on } } };
     case 'draft':
       return { ...state, draft: action.draft };
   }
@@ -84,6 +88,7 @@ export interface Store {
   replaceData: (data: AppData) => void;
   resetAll: () => void;
   setLanguage: (language: LanguageCode) => void;
+  setSound: (on: boolean) => void;
   /** Re-reads "today" (used when the app returns to the foreground). */
   refreshToday: () => void;
 }
@@ -113,6 +118,9 @@ export function StoreProvider({ children, storage }: { children: ReactNode; stor
       console.error('Could not save data', err);
     }
   }, [state.data, store]);
+
+  // Keep the sound module in step with the saved setting.
+  useEffect(() => setSoundEnabled(state.data.settings.sound), [state.data.settings.sound]);
 
   const refreshToday = useCallback(() => dispatch({ type: 'tick', today: getToday() }), []);
 
@@ -154,6 +162,7 @@ export function StoreProvider({ children, storage }: { children: ReactNode; stor
       replaceData: (data) => dispatch({ type: 'replace', data }),
       resetAll: () => dispatch({ type: 'replace', data: emptyData() }),
       setLanguage: (language) => dispatch({ type: 'language', language }),
+      setSound: (on) => dispatch({ type: 'sound', on }),
       refreshToday,
     }),
     [state, refreshToday],
