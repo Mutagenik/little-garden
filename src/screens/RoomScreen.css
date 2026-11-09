@@ -1,0 +1,316 @@
+.room {
+  --label-h: 48px;
+  --plank-h: 14px;
+}
+
+.room__header {
+  margin-bottom: var(--space-4);
+}
+
+.room__date {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
+}
+
+.room__grow {
+  margin-bottom: var(--space-4);
+}
+
+/* The room: a softly lit wall with a window and shelves. */
+.room-scene {
+  margin: 0 calc(var(--space-2) * -1);
+  padding: var(--space-3) var(--space-3) var(--space-2);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 46px, rgba(160, 130, 90, 0.05) 46px 48px),
+    radial-gradient(ellipse at 50% 0%, rgba(255, 248, 228, 0.9), transparent 70%),
+    linear-gradient(var(--wall), var(--wall-shade));
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 1px rgba(120, 90, 60, 0.06);
+}
+
+@media (min-width: 600px) {
+  .room-scene {
+    margin: 0;
+  }
+}
+
+.shelf {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-top: var(--space-5);
+}
+
+.shelf + .shelf {
+  margin-top: var(--space-2);
+}
+
+/* The plank the pots stand on. */
+.shelf::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--label-h);
+  height: var(--plank-h);
+  z-index: 0;
+  border-radius: 3px;
+}
+
+.shelf--wood::after {
+  background: linear-gradient(var(--wood-light), var(--wood) 45%, var(--wood-dark));
+  box-shadow: 0 6px 10px -4px rgba(80, 50, 20, 0.35);
+}
+
+/* Shelf brackets */
+.shelf--wood::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  bottom: calc(var(--label-h) - 12px);
+  height: 12px;
+  z-index: 0;
+  background:
+    linear-gradient(135deg, var(--wood-dark) 0 50%, transparent 50%) left / 12px 12px no-repeat,
+    linear-gradient(225deg, var(--wood-dark) 0 50%, transparent 50%) right / 12px 12px no-repeat;
+  opacity: 0.75;
+}
+
+/* A lone plant gets a little more room so it does not look lost on the sill. */
+.shelf--single .plant-tile {
+  flex-basis: 44%;
+  max-width: 44%;
+}
+
+.shelf--sill {
+  min-height: 250px;
+  padding-top: var(--space-6);
+}
+
+.shelf--sill::after {
+  left: -4px;
+  right: -4px;
+  height: calc(var(--plank-h) + 2px);
+  background: linear-gradient(#fffaf0, #efe5d2 55%, #d9ccb3);
+  box-shadow: 0 6px 12px -4px rgba(80, 60, 30, 0.3);
+}
+
+.plant-tile {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 33.333%;
+  max-width: 33.333%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s ease;
+}
+
+.plant-tile:active {
+  transform: translateY(-2px);
+}
+
+.plant-tile__plant {
+  display: block;
+  padding: 0 6px;
+  margin-bottom: var(--plank-h);
+}
+
+.plant-tile__plant .plant {
+  margin-bottom: -2px;
+}
+
+.plant-tile__label {
+  height: var(--label-h);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2px 4px 0;
+  min-width: 0;
+}
+
+.plant-tile__name {
+  font-family: var(--font-serif);
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.plant-tile__meta {
+  font-size: 0.68rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Window */
+.window-art {
+  position: absolute;
+  top: var(--space-2);
+  left: 6%;
+  right: 6%;
+  bottom: calc(var(--label-h) + var(--plank-h));
+  z-index: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.window-art__frame {
+  position: relative;
+  width: 74%;
+  height: 100%;
+  border: 7px solid #fbf6ea;
+  border-bottom-width: 0;
+  border-radius: 90px 90px 0 0;
+  box-shadow: 0 0 0 1px #e2d6bf, inset 0 0 0 1px #e2d6bf;
+  overflow: hidden;
+}
+
+.window-art__glass {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(#cfe0e4 0%, #e5ece0 55%, #f3ecd8 100%);
+}
+
+.window-art__sun {
+  position: absolute;
+  top: 18%;
+  right: 20%;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff7da 0 45%, rgba(255, 240, 200, 0) 72%);
+}
+
+.window-art__hill {
+  position: absolute;
+  left: -20%;
+  right: -20%;
+  border-radius: 50% 50% 0 0;
+}
+
+.window-art__hill--far {
+  bottom: 18%;
+  height: 34%;
+  background: #cdd8c4;
+  left: 10%;
+}
+
+.window-art__hill--near {
+  bottom: 0;
+  height: 30%;
+  background: #b9c9ad;
+  right: 30%;
+}
+
+.window-art__bar {
+  position: absolute;
+  background: #fbf6ea;
+}
+
+.window-art__bar--v {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  transform: translateX(-50%);
+}
+
+.window-art__bar--h {
+  left: 0;
+  right: 0;
+  top: 46%;
+  height: 5px;
+}
+
+.window-art__curtain {
+  width: 13%;
+  height: 104%;
+  margin-top: -3%;
+  background: repeating-linear-gradient(90deg, #ead9c9 0 6px, #e1cdb9 6px 10px, #ead9c9 10px 14px);
+  border-radius: 0 0 40% 40%;
+  box-shadow: 0 2px 6px rgba(90, 60, 30, 0.12);
+}
+
+.window-art__curtain--left {
+  margin-right: -4%;
+  z-index: 1;
+}
+
+.window-art__curtain--right {
+  margin-left: -4%;
+  z-index: 1;
+}
+
+/* Empty state */
+.room__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+}
+
+.room__empty .room-scene {
+  align-self: stretch;
+  margin-bottom: var(--space-3);
+}
+
+.shelf--empty {
+  min-height: 290px;
+}
+
+.shelf__decor {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 78%;
+  margin-bottom: var(--plank-h);
+  height: 0;
+}
+
+.shelf--empty .shelf__decor {
+  margin-bottom: calc(var(--label-h) + var(--plank-h));
+}
+
+.watering-can {
+  width: 92px;
+  height: auto;
+  display: block;
+  margin-bottom: -3px;
+}
+
+.book-stack {
+  width: 62px;
+  height: auto;
+  display: block;
+  margin-bottom: -2px;
+}
+
+.room__empty-title {
+  font-size: var(--text-xl);
+}
+
+.room__empty-text {
+  color: var(--ink-soft);
+  max-width: 32ch;
+  margin-bottom: var(--space-2);
+}

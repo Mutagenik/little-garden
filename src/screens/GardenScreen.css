@@ -1,0 +1,149 @@
+/* A light greenhouse: glass panes, a pitched roof and wooden benches. */
+.greenhouse {
+  position: relative;
+  margin: 0 calc(var(--space-4) * -1);
+  padding: 64px var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-md) var(--radius-md);
+  background:
+    linear-gradient(90deg, transparent 0 calc(33.33% - 2px), rgba(255, 255, 255, 0.85) calc(33.33% - 2px) 33.33%, transparent 33.33% calc(66.66% - 2px), rgba(255, 255, 255, 0.85) calc(66.66% - 2px) 66.66%, transparent 66.66%),
+    linear-gradient(180deg, #e8efe6, #eef0e3 60%, #efe7d4);
+  box-shadow: inset 0 0 0 4px #fbf8f1, 0 0 0 1px var(--line);
+  overflow: hidden;
+}
+
+@media (min-width: 600px) {
+  .greenhouse {
+    margin: 0;
+  }
+}
+
+.greenhouse__roof {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background:
+    linear-gradient(160deg, transparent 49%, #fbf8f1 49% 51%, transparent 51%) left / 50% 100% no-repeat,
+    linear-gradient(20deg, transparent 49%, #fbf8f1 49% 51%, transparent 51%) right / 50% 100% no-repeat,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.1));
+  border-bottom: 4px solid #fbf8f1;
+}
+
+.greenhouse__beds {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  row-gap: var(--space-4);
+}
+
+@media (min-width: 420px) {
+  .greenhouse__beds {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.garden-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Bench plank under each pot; tiles are flush so planks join into one bench per row. */
+.garden-tile__plant {
+  position: relative;
+  display: block;
+  padding: 0 10px;
+}
+
+.garden-tile__plant::after {
+  content: '';
+  display: block;
+  height: 10px;
+  margin: -2px -10px 0;
+  background: linear-gradient(#c8a47a, #a87e54);
+  box-shadow: 0 4px 8px -3px rgba(80, 50, 20, 0.35);
+}
+
+.garden-tile__label {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2) 4px 0;
+  min-width: 0;
+}
+
+.garden-tile__name {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.garden-tile__meta {
+  font-size: 0.7rem;
+  color: var(--ink-soft);
+}
+
+.greenhouse__empty {
+  text-align: center;
+  padding: var(--space-5) var(--space-4) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.greenhouse__empty h2 {
+  font-size: var(--text-xl);
+}
+
+.greenhouse__empty p {
+  color: var(--ink-soft);
+}
+
+.greenhouse__bench--empty {
+  height: 12px;
+  margin: 90px var(--space-4) var(--space-4);
+  background: linear-gradient(#c8a47a, #a87e54);
+  border-radius: 2px;
+  box-shadow: 0 6px 10px -4px rgba(80, 50, 20, 0.35);
+}
+
+/* Detail */
+.garden-detail__stage {
+  display: flex;
+  justify-content: center;
+  margin: 0 calc(var(--space-4) * -1);
+  padding: var(--space-4) 0 0;
+  background: linear-gradient(180deg, #e8efe6, #efe7d4);
+  border-bottom: 10px solid #b38c62;
+}
+
+.garden-detail__plant {
+  width: min(78vw, 300px);
+}
+
+.garden-detail__readonly {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+  margin: var(--space-4) 0;
+}
+
+.garden-detail__heading {
+  margin-top: var(--space-5);
+}
+
+.garden-detail__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}

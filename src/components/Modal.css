@@ -1,0 +1,88 @@
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  justify-content: center;
+  background: rgba(59, 58, 50, 0.32);
+  animation: modal-fade 0.18s ease;
+  padding: var(--space-4);
+}
+
+.modal--dialog {
+  align-items: center;
+}
+
+.modal--sheet {
+  align-items: flex-end;
+  padding: 0;
+}
+
+.modal__panel {
+  width: 100%;
+  max-width: 440px;
+  background: var(--milk);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  outline: none;
+}
+
+.modal--sheet .modal__panel {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom));
+  animation: sheet-up 0.22s ease;
+}
+
+.modal__grip {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line);
+  align-self: center;
+  margin-top: calc(var(--space-2) * -1);
+}
+
+.modal__title {
+  font-size: var(--text-xl);
+}
+
+.modal__text {
+  color: var(--ink-soft);
+}
+
+.modal__actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.modal__actions .btn {
+  flex: 1;
+}
+
+@keyframes modal-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal,
+  .modal--sheet .modal__panel {
+    animation: none;
+  }
+}

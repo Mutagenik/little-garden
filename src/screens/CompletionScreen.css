@@ -1,0 +1,98 @@
+.completion {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  overflow-y: auto;
+  background:
+    radial-gradient(ellipse at 50% 15%, rgba(255, 248, 228, 1), transparent 70%),
+    linear-gradient(var(--milk), var(--milk-deep));
+  animation: completion-in 0.4s ease;
+}
+
+.completion__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: calc(var(--space-5) + env(safe-area-inset-top)) var(--space-4) calc(var(--space-6) + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.completion__plant {
+  width: min(64vw, 240px);
+  margin: 0 auto;
+}
+
+.completion__title {
+  font-size: var(--text-2xl);
+  outline: none;
+}
+
+.completion__text {
+  color: var(--ink-soft);
+}
+
+.completion .completion-stats {
+  text-align: left;
+}
+
+/* Falling petals — only for an all-green plant. */
+.petals {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.petal {
+  --i: 0;
+  position: absolute;
+  top: -20px;
+  left: calc(var(--i) * 5.6% + 2%);
+  width: 10px;
+  height: 7px;
+  border-radius: 60% 0 60% 0;
+  background: #f1c9c1;
+  opacity: 0.85;
+  animation: petal-fall calc(7s + var(--i) * 0.37s) linear calc(var(--i) * -0.83s) infinite;
+}
+
+.petal:nth-child(3n) {
+  background: #f6e2b8;
+}
+
+.petal:nth-child(4n) {
+  background: #fff6ec;
+  width: 8px;
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translate3d(0, -20px, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(24px, 50vh, 0) rotate(200deg);
+  }
+  100% {
+    transform: translate3d(-12px, 105vh, 0) rotate(400deg);
+  }
+}
+
+@keyframes completion-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .petals {
+    display: none;
+  }
+  .completion {
+    animation: none;
+  }
+}

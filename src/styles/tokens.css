@@ -1,0 +1,68 @@
+/* All colours, fonts and spacing live here. */
+:root {
+  /* Surfaces */
+  --milk: #f6f0e4;
+  --milk-deep: #efe6d4;
+  --paper: #fbf8f1;
+  --wall: #f3eadb;
+  --wall-shade: #eadfcb;
+  --wood: #b98a5e;
+  --wood-dark: #94683f;
+  --wood-light: #d2a77b;
+  --glass: #e4ece4;
+
+  /* Ink */
+  --ink: #3b3a32;
+  --ink-soft: #6b685c;
+  --ink-faint: #9a9586;
+  --line: #ddd2bd;
+
+  /* Accent */
+  --sage: #7f9a73;
+  --sage-dark: #637d58;
+  --sage-light: #dfe7d6;
+  --focus: #4f6d45;
+
+  /* Plant */
+  --stem: #6f8a52;
+  --soil: #5d4636;
+  --leaf-white: #fffdf7;
+  --leaf-white-line: #a3ab95;
+  --leaf-white-vein: #d8dccd;
+  --leaf-future: #f6f3ea;
+  --leaf-green: #4f9a3d;
+  --leaf-green-line: #3a7a2c;
+  --leaf-green-vein: #8cc278;
+  --leaf-ochre: #c99645;
+  --leaf-ochre-line: #a37530;
+  --leaf-ochre-vein: #e2bf7f;
+  --glow: rgba(240, 196, 92, 0.75);
+
+  /* Type */
+  --font-serif: 'Cormorant Garamond', 'Georgia', serif;
+  --font-sans: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.25rem;
+
+  /* Spacing & shape */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+  --shadow-soft: 0 6px 24px rgba(80, 60, 30, 0.1);
+  --shadow-card: 0 2px 10px rgba(80, 60, 30, 0.08);
+
+  --tabbar-height: 64px;
+  --content-max: 560px;
+}
