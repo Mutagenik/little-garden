@@ -45,9 +45,12 @@ The bottom tab bar (`src/components/TabBar.tsx`) has three tabs: My Room, My Gar
 **Brand logo:** the owner's logo ("Jesenika", lavender flower + wordmark) appears in the top-right
 corner of the **My Room, My Garden and Settings** headers only, via `<BrandLogo/>`
 (`src/components/BrandLogo.tsx`, header class `page__header--brand`). The original artwork is
-`logo/Logo.png` (1250×1428, transparent). `src/assets/logo.png` is a trimmed 173×192 copy,
-displayed 52 px wide. To replace the logo, regenerate that copy with `sharp` (trim, resize to
-192 px tall, PNG palette).
+`logo/Logo.png` (1250×1428, lavender on transparent). `src/assets/logo.png` is a trimmed 173×192
+copy **recoloured to the button green `--sage` #7f9a73**, displayed 52 px wide. The logo is an
+invisible link (no link styling) to **https://jesenika.cz/** (`BRAND_URL`), opening in a new
+tab (`rel="noopener noreferrer"`). To replace or recolour it, regenerate the copy with `sharp`:
+map each pixel's white→lavender blend onto white→target colour, keep alpha, trim, resize to
+192 px tall, PNG palette.
 
 ---
 

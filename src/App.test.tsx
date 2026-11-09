@@ -93,7 +93,13 @@ describe('Little Garden app', () => {
     ];
     for (const [hash, visible] of cases) {
       const { unmount } = startApp('2026-11-09', hash);
-      expect(screen.queryAllByRole('img', { name: 'Jesenika' }), hash).toHaveLength(visible ? 1 : 0);
+      const links = screen.queryAllByRole('link', { name: /Jesenika website/ });
+      expect(links, hash).toHaveLength(visible ? 1 : 0);
+      if (visible) {
+        expect(links[0]).toHaveAttribute('href', 'https://jesenika.cz/');
+        expect(links[0]).toHaveAttribute('target', '_blank');
+        expect(links[0]).toHaveAttribute('rel', 'noopener noreferrer');
+      }
       unmount();
     }
   });

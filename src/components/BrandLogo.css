@@ -4,13 +4,33 @@
   padding-right: 68px; /* keep long titles clear of the logo */
 }
 
+/* An invisible link: no underline, no colour change — the logo itself is the button. */
 .brand-logo {
   position: absolute;
   top: -2px;
   right: 0;
+  display: block;
   width: 52px;
+  border-radius: 8px;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.brand-logo:active {
+  opacity: 0.75;
+  transform: scale(0.97);
+}
+
+.brand-logo__img {
+  display: block;
+  width: 100%;
   height: auto;
   user-select: none;
   -webkit-user-drag: none;
-  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-logo {
+    transition: none;
+  }
 }

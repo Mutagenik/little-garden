@@ -10,7 +10,7 @@ export const en = {
   },
   app: {
     name: 'Little Garden',
-    brandLogoAlt: 'Jesenika',
+    brandLinkLabel: 'Jesenika website (opens in a new tab)',
   },
   nav: {
     room: 'My Room',
