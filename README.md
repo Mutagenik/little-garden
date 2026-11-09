@@ -3,6 +3,11 @@
 A cosy habit tracker: every habit is a potted houseplant, every leaf is one day.
 Green = done, ochre = not done, white = not marked yet.
 
+Live app: https://mutagenik.github.io/little-garden/
+
+**For the full explanation of how the app works (architecture, data, rules, recipes), read
+[CLAUDE.md](CLAUDE.md).** AI coding assistants such as Claude Code read that file automatically.
+
 ## Run it on this computer
 
 Node.js lives in `C:\AIwork\Node` (portable). In PowerShell, from this folder:
